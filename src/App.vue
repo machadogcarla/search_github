@@ -1,28 +1,79 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+
+  <div>
+    <div class="container">
+      <div class="search card card-body">
+          <p class="titulo1">GitHub <span class="titulo2">Search</span></p>
+        <form>
+          <div class="form-group row">
+            <input class="col-sm-11 col-form-label" @keyup="getUser" required/>
+            <div class="col-sm-1">
+              <button class="btn btn-dark btn-block"> <v-icon class="material-icons"> search </v-icon></button>
+              <!--<button >a</button>-->
+            </div>
+          </div>
+          
+        </form>
+      </div>
+
+      <div
+        class="row mt-3"
+        v-if="user.length !== 0"
+      >
+        <div class="col-md-4">
+          <Profile :user="user" />
+        </div>
+        <div class="col-md-8">
+          <Repos
+            v-for="repo in repos"
+            :repo="repo"
+            :key="repo"
+          />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Profile from "./components/Profile.vue";
+import Repos from "./components/Repos.vue";
+import axios from "axios";
 
 export default {
-  name: 'App',
+  name: "app",
+  data() {
+    return {
+      github: {
+        url: "https://api.github.com/users",
+        client_id: "044ecbe0f9cd24459823",
+        client_secret: "440f7e976118b387fca6d14d9dbe9b742bf03d05",
+        count: 10,
+        sort: "created: asc"
+      },
+      user: [],
+      repos: []
+    };
+  },
   components: {
-    HelloWorld
+    Profile,
+    Repos
+  },
+  methods: {
+    getUser(e) {
+      const user = e.target.value;
+      const { url, client_id, client_secret, count, sort } = this.github;
+      axios
+        .get(
+          `${url}/${user}?client_id=${client_id}&client_secret=${client_secret}`
+        )
+        .then(({ data }) => (this.user = data));
+      axios
+        .get(
+          `${url}/${user}/repos?per_page=${count}&sort=${sort}&client_id=${client_id}&client_secret=${client_secret}`
+        )
+        .then(({ data }) => (this.repos = data));
+    }
   }
-}
+};
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
