@@ -6,7 +6,6 @@
       <template v-if="mostrarDiv()">
         <div class="search card card-body" >
             <p class="titulo1">GitHub <span class="titulo2">Search</span></p>
-
             <form @submit="getUser">
                 <div class="form-group row">
                   <input class="col-sm-11 col-form-label" type="text"  id="search" required/>
@@ -39,10 +38,12 @@
           </div>
         </template>
 
-      <div
-        class="row mt-3"
-        v-if="user.length !== 0"
-      >
+            
+      <section v-if="errored">
+        <div class="alert alert-warning" role="alert">O usuário não foi encontrado. Tente novamente</div>
+      </section>
+        
+        <div class="row mt-3" v-if="user.length !== 0">
         <div class="col-md-4">
           <Profile :user="user" />   
         </div>
@@ -50,11 +51,11 @@
           <Repos
             v-for="repo in orderedRepos"
             :repo="repo"
-            :key="repo"
-             
+            :key="repo" 
           />
         </div>
       </div>
+
     </div>
   </div>
 
@@ -74,11 +75,12 @@ export default {
   data() {
 
       return {
-        valor: 0,
+        valor: true,
+        errored: false,
         github: {
           url: "https://api.github.com/users",
-          //client_id: "3101ae14397bfa4010a2d",
-          //client_secret: "46fa1f407bc140a181b2f013bab033b954e23a18",
+          client_id: "3101ae14397bfa4010a2d",
+          client_secret: "46fa1f407bc140a181b2f013bab033b954e23a18",
           count: "10",
           },
         user: [],
@@ -101,23 +103,28 @@ export default {
           var search = document.getElementById("search").value;
           search = search.split(' ').join('')
 
-          const { url, count} = this.github;
-          axios.get(
-              `${url}/${search}`
+          const { url, count, client_id, client_secret} = this.github;
+          axios.post(
+              `${url}/${search}?client_id=${client_id}&client_secret=${client_secret}`
             )
-            .then(({ data }) => (this.user = data));
+            .then(({ data }) => (this.user = data))
+            .catch((e) => {
+              console.log('Whoops! Houve um erro.', e.message || e)
+              this.errored = true
+            });
 
-          axios.get(
-              `${url}/${search}/repos?per_page=${count}`
+          axios.post(
+              `${url}/${search}/repos?per_page=${count}&client_id=${client_id}&client_secret=${client_secret}`
             )
             .then(({ data }) => (this.repos = data));
               
-              return this.valor = -1
+              return this.valor = false
+              
         },
 
         mostrarDiv() {
-          return this.valor >= 0
-        }
+          return this.valor == true
+        },
       }
 };
 </script>
