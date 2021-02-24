@@ -81,7 +81,7 @@ export default {
           url: "https://api.github.com/users",
           client_id: "3101ae14397bfa4010a2d",
           client_secret: "46fa1f407bc140a181b2f013bab033b954e23a18",
-          count: "10",
+          count: "20",
           },
         user: [],
         repos: []
@@ -104,7 +104,7 @@ export default {
           search = search.split(' ').join('')
 
           const { url, count, client_id, client_secret} = this.github;
-          axios.post(
+          axios.get(
               `${url}/${search}?client_id=${client_id}&client_secret=${client_secret}`
             )
             .then(({ data }) => (this.user = data))
@@ -113,11 +113,11 @@ export default {
               this.errored = true
             });
 
-          axios.post(
+          axios.get(
               `${url}/${search}/repos?per_page=${count}&client_id=${client_id}&client_secret=${client_secret}`
             )
             .then(({ data }) => (this.repos = data));
-              
+              this.errored = false
               return this.valor = false
               
         },
