@@ -21,3 +21,15 @@
         font-size: 30px;
         text-align: center;
 }
+
+li{
+        color: rgb(117,117,117,1);
+}
+
+.username {
+        color: (0,0,0,1);
+}
+
+.repo {
+        color: rgb(117,117,117,1);
+}

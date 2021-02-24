@@ -13,7 +13,7 @@
             alt="Imagem de perfil"
           >
           <ul class="list-group list-group-flush">
-            <li class="list-group-item"><h2>{{user.name}}</h2></li>
+            <li class="list-group-item"><h2 class="username">{{user.name}}</h2></li>
             <li class="list-group-item">{{user.login}}</li>
             <li class="list-group-item"><span class="material-icons"> work_outline </span>{{user.company}}</li>
             <li class="list-group-item"><span class="material-icons"> place </span>{{user.location}}</li>

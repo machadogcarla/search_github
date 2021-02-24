@@ -84,7 +84,7 @@ export default {
           url: "https://api.github.com/users",
           client_id: "3101ae14397bfa4010a2d",
           client_secret: "46fa1f407bc140a181b2f013bab033b954e23a18",
-          count: "20",
+          count: "30",
           },
         user: [],
         repos: []
