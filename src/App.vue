@@ -42,19 +42,21 @@
       <section v-if="errored">
         <div class="alert alert-warning" role="alert">O usuário não foi encontrado. Tente novamente</div>
       </section>
-        
-        <div class="row mt-3" v-if="user.length !== 0">
-        <div class="col-md-4">
-          <Profile :user="user" />   
+
+        <template v-if="mostrarDivResult()">
+          <div class="row mt-3" v-if="user.length !== 0">
+          <div class="col-md-4">
+            <Profile :user="user" />   
+          </div>
+          <div class="col-md-8">
+            <Repos
+              v-for="repo in orderedRepos"
+              :repo="repo"
+              :key="repo" 
+            />
+          </div>
         </div>
-        <div class="col-md-8">
-          <Repos
-            v-for="repo in orderedRepos"
-            :repo="repo"
-            :key="repo" 
-          />
-        </div>
-      </div>
+      </template>
 
     </div>
   </div>
@@ -77,6 +79,7 @@ export default {
       return {
         valor: true,
         errored: false,
+        valorResult: false,
         github: {
           url: "https://api.github.com/users",
           client_id: "3101ae14397bfa4010a2d",
@@ -111,6 +114,7 @@ export default {
             .catch((e) => {
               console.log('Whoops! Houve um erro.', e.message || e)
               this.errored = true
+              this.valorResult = false
             });
 
           axios.get(
@@ -118,13 +122,18 @@ export default {
             )
             .then(({ data }) => (this.repos = data));
               this.errored = false
-              return this.valor = false
+              this.valorResult = true
+              return this.valor = false 
+              
               
         },
 
         mostrarDiv() {
           return this.valor == true
         },
+        mostrarDivResult() {
+          return this.valorResult == true
+        }
       }
 };
 </script>
