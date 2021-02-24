@@ -1,7 +1,6 @@
 <template>
   <div>
     <div class="container">  
-    <!--{{condicional()}}-->
 
       <template v-if="mostrarDiv()">
         <div class="search card card-body" >
@@ -17,7 +16,7 @@
         </div>
       </template>    
       
-      <!--Busca e logo acima"-->
+      
         <template v-else>
             <div class="search card card-body">
               <div class="row"> 
