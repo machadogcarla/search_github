@@ -1,9 +1,11 @@
 <template>
   <div>
-    <div class="container">
-            
-      <div class="search card card-body">
-          <p class="titulo1">GitHub <span class="titulo2">Search</span></p>
+    <div class="container">  
+    <!--{{condicional()}}-->
+
+      <template v-if="mostrarDiv()">
+        <div class="search card card-body" >
+            <p class="titulo1">GitHub <span class="titulo2">Search</span></p>
 
             <form @submit="getUser">
                 <div class="form-group row">
@@ -12,9 +14,30 @@
                     <button class="btn btn-dark btn-block"> <v-icon class="material-icons"> search </v-icon></button>
                   </div>
               </div>
-            </form>
-            
-      </div>
+            </form>  
+        </div>
+      </template>    
+      
+      <!--Busca e logo acima"-->
+        <template v-else>
+            <div class="search card card-body">
+              <div class="row"> 
+                  <div class="col-md-4">
+                    <p class="titulo1peq">GitHub <span class="titulo2peq">Search</span></p>
+                  </div> 
+                  <div class="col-md-8">
+                    <form @submit="getUser" >
+                        <div class="form-group row">
+                          <input class="col-sm-10 form-control form-control-sm" type="text"  id="search" required/>
+                          <div class="col-sm-2">
+                            <button class="btn btn-dark"> <v-icon class="material-icons"> search </v-icon></button>
+                          </div>
+                        </div>
+                    </form>      
+                </div>         
+              </div>
+          </div>
+        </template>
 
       <div
         class="row mt-3"
@@ -34,7 +57,7 @@
       </div>
     </div>
   </div>
- 
+
 </template>
 
 <script>
@@ -45,52 +68,56 @@ import Profile from "./components/Profile.vue";
 import Repos from "./components/Repos.vue";
 
 export default {
+
   name: "app",
-    
+  
   data() {
 
       return {
-      github: {
-        url: "https://api.github.com/users",
-        //client_id: "3101ae14397bfa4010a2d",
-        //client_secret: "46fa1f407bc140a181b2f013bab033b954e23a18",
-        count: "10",
-      },
-      user: [],
-      repos: []
+        valor: 0,
+        github: {
+          url: "https://api.github.com/users",
+          //client_id: "3101ae14397bfa4010a2d",
+          //client_secret: "46fa1f407bc140a181b2f013bab033b954e23a18",
+          count: "10",
+          },
+        user: [],
+        repos: []
     };
   },
-    components: {
-    Profile,
-    Repos
+      components: {
+      Profile,
+      Repos
   },
-   computed: {
-  orderedRepos: function () {
-    return _.orderBy(this.repos, 'stargazers_count', 'desc');
+      computed: {
+        orderedRepos: function () {
+          return _.orderBy(this.repos, 'stargazers_count', 'desc');
+          }
+      },
+      methods: {
+        getUser: function (e) { 
+       
+          e.preventDefault();   
+          var search = document.getElementById("search").value;
+          search = search.split(' ').join('')
 
-  }
-  },
+          const { url, count} = this.github;
+          axios.get(
+              `${url}/${search}`
+            )
+            .then(({ data }) => (this.user = data));
 
-  methods: {
-   getUser: function (e) {   
-     e.preventDefault();    
-    
-    var search = document.getElementById("search").value;
-    
-    const { url, count} = this.github;
-      axios.get(
-          `${url}/${search}`
-        )
-        .then(({ data }) => (this.user = data));
+          axios.get(
+              `${url}/${search}/repos?per_page=${count}`
+            )
+            .then(({ data }) => (this.repos = data));
+              
+              return this.valor = -1
+        },
 
-        axios
-        .get(
-          `${url}/${search}/repos?per_page=${count}`
-        )
-        .then(({ data }) => (this.repos = data));
-      
-  }
-  }
- 
+        mostrarDiv() {
+          return this.valor >= 0
+        }
+      }
 };
 </script>
